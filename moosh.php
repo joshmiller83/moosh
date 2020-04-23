@@ -21,7 +21,17 @@ if (file_exists(__DIR__ . '/Moosh')) {
     die("I can't find my own libraries\n");
 }
 
-$loader = require $moosh_dir . '/vendor/autoload.php';
+// Lifted from the drush.php from drush/drush project.
+// Set up autoloader
+$loader = false;
+if (file_exists($autoloadFile = __DIR__ . '/vendor/autoload.php')
+  || file_exists($autoloadFile = __DIR__ . '/../autoload.php')
+  || file_exists($autoloadFile = __DIR__ . '/../../autoload.php')
+) {
+  $loader = include $autoloadFile;
+} else {
+  throw new \Exception("Could not locate autoload.php. cwd is $cwd; __DIR__ is " . __DIR__);
+}
 $loader->add('DiffMatchPatch\\', $moosh_dir . '/vendor/yetanotherape/diff-match-patch/src');
 
 $options = array('debug' => true, 'optimizations' => 0);
